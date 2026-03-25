@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: transactions
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    command: go run cmd/api/main.go
+    volumes:
+      - .:/app
+    working_dir: /app
+    depends_on:
+      - rabbitmq
+      - postgres
+    ports:
+      - "8080:8080"
+
+  worker:
+    build: .
+    command: go run cmd/worker/main.go
+    volumes:
+      - .:/app
+    working_dir: /app
+    depends_on:
+      - rabbitmq
+      - postgres
