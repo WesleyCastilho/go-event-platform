@@ -12,6 +12,6 @@ const (
 type Transaction struct {
 	ID        string
 	Amount    float64
-	Status    string
+	Status    Status
 	CreatedAt time.Time
 }
